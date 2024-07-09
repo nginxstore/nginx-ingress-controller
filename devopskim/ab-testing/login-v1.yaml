@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: login-v1
+  labels:
+    app: login-app
+    version: v1
+spec:
+  selector:
+    matchLabels:
+      app: login-app
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: login-app
+        version: v1
+    spec:
+      containers:
+        - name: login-container-v1
+          image: nginxstore/example-login-ui:v1
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: login-svc-v1
+spec:
+  selector:
+    app: login-app
+    version: v1
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

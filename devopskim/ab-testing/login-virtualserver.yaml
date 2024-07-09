@@ -1,0 +1,32 @@
+apiVersion: k8s.nginx.org/v1
+kind: VirtualServer
+metadata:
+  name: login-virtualserver
+spec:
+  host: login.example.com
+  upstreams:
+  - name: login-v1
+    service: login-svc-v1
+    port: 80
+  - name: login-v2
+    service: login-svc-v2
+    port: 80
+  routes:
+  - path: /
+    splits:
+    - weight: 50
+      action:
+        proxy:
+          upstream: login-v1
+          requestHeaders:
+            set:
+            - name: Host
+              value: login-svc-v1.nginx-ingress.svc.cluster.local
+    - weight: 50
+      action:
+        proxy:
+          upstream: login-v2
+          requestHeaders:
+            set:
+            - name: Host
+              value: login-svc-v2.nginx-ingress.svc.cluster.local
